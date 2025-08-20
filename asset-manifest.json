@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/sisam/static/js/main.f1212e15.js",
+    "main.js": "/sisam/static/js/main.ece4b731.js",
     "index.html": "/sisam/index.html",
-    "main.f1212e15.js.map": "/sisam/static/js/main.f1212e15.js.map"
+    "main.ece4b731.js.map": "/sisam/static/js/main.ece4b731.js.map"
   },
   "entrypoints": [
-    "static/js/main.f1212e15.js"
+    "static/js/main.ece4b731.js"
   ]
 }
