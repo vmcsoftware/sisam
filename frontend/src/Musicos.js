@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+const API_URL = "https://sisam-ecru.vercel.app/api";
 import { Box, Typography, TextField, Button, MenuItem, Grid, Paper, IconButton, Stack, Divider, InputAdornment, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,7 +15,7 @@ function Musicos() {
   const [filtroTipo, setFiltroTipo] = useState('');
   const fetchMusicos = async () => {
     setLoading(true);
-    const res = await fetch('/api/musicos');
+    const res = await fetch(`${API_URL}/musicos`);
     const data = await res.json();
     setMusicos(data);
     setLoading(false);
@@ -27,13 +29,13 @@ function Musicos() {
   const handleSubmit = async e => {
     e.preventDefault();
     if (editId) {
-      await fetch(`/api/musicos/${editId}`, {
+      await fetch(`${API_URL}/musicos/${editId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
     } else {
-      await fetch('/api/musicos', {
+      await fetch(`${API_URL}/musicos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -49,7 +51,7 @@ function Musicos() {
   };
   const handleDelete = async id => {
     if (window.confirm('Deseja excluir este músico?')) {
-      await fetch(`/api/musicos/${id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/musicos/${id}`, { method: 'DELETE' });
       fetchMusicos();
     }
   };

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+const API_URL = "https://sisam-ecru.vercel.app/api";
+
 function Congregacoes() {
   const [congregacoes, setCongregacoes] = useState([]);
   const [form, setForm] = useState({ nome: '', endereco: '', diasCulto: '' });
@@ -9,7 +11,7 @@ function Congregacoes() {
 
   const fetchCongregacoes = async () => {
     setLoading(true);
-    const res = await fetch('/api/congregacoes');
+    const res = await fetch(`${API_URL}/congregacoes`);
     const data = await res.json();
     setCongregacoes(data);
     setLoading(false);
@@ -27,13 +29,13 @@ function Congregacoes() {
     e.preventDefault();
     const diasCultoArray = form.diasCulto.split(',').map(d => d.trim()).filter(Boolean);
     if (editId) {
-      await fetch(`/api/congregacoes/${editId}`, {
+      await fetch(`${API_URL}/congregacoes/${editId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, diasCulto: diasCultoArray }),
       });
     } else {
-      await fetch('/api/congregacoes', {
+      await fetch(`${API_URL}/congregacoes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, diasCulto: diasCultoArray }),
@@ -51,7 +53,7 @@ function Congregacoes() {
 
   const handleDelete = async id => {
     if (window.confirm('Deseja excluir esta congregação?')) {
-      await fetch(`/api/congregacoes/${id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/congregacoes/${id}`, { method: 'DELETE' });
       fetchCongregacoes();
     }
   };

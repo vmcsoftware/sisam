@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+const API_URL = "https://sisam-ecru.vercel.app/api";
+
 function Eventos() {
   const [eventos, setEventos] = useState([]);
   const [form, setForm] = useState({
@@ -18,7 +20,7 @@ function Eventos() {
 
   const fetchEventos = async () => {
     setLoading(true);
-    const res = await fetch('/api/eventos');
+    const res = await fetch(`${API_URL}/eventos`);
     const data = await res.json();
     setEventos(data);
     setLoading(false);
@@ -36,13 +38,13 @@ function Eventos() {
     e.preventDefault();
     const participantesArray = form.participantes.split(',').map(p => p.trim()).filter(Boolean);
     if (editId) {
-      await fetch(`/api/eventos/${editId}`, {
+      await fetch(`${API_URL}/eventos/${editId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, participantes: participantesArray }),
       });
     } else {
-      await fetch('/api/eventos', {
+      await fetch(`${API_URL}/eventos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, participantes: participantesArray }),
@@ -76,7 +78,7 @@ function Eventos() {
 
   const handleDelete = async id => {
     if (window.confirm('Deseja excluir este evento?')) {
-      await fetch(`/api/eventos/${id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/eventos/${id}`, { method: 'DELETE' });
       fetchEventos();
     }
   };
