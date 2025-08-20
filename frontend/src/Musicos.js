@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, TextField, Button, MenuItem, Grid, Paper, IconButton, Stack, Divider, InputAdornment, CircularProgress } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 
 function Musicos() {
   const [musicos, setMusicos] = useState([]);
@@ -7,7 +13,6 @@ function Musicos() {
   const [editId, setEditId] = useState(null);
   const [busca, setBusca] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
-
   const fetchMusicos = async () => {
     setLoading(true);
     const res = await fetch('/api/musicos');
@@ -15,15 +20,12 @@ function Musicos() {
     setMusicos(data);
     setLoading(false);
   };
-
   useEffect(() => {
     fetchMusicos();
   }, []);
-
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async e => {
     e.preventDefault();
     if (editId) {
@@ -43,19 +45,16 @@ function Musicos() {
     setEditId(null);
     fetchMusicos();
   };
-
   const handleEdit = m => {
     setForm({ nome: m.nome, telefone: m.telefone, congregacaoId: m.congregacaoId, tipo: m.tipo });
     setEditId(m.id);
   };
-
   const handleDelete = async id => {
     if (window.confirm('Deseja excluir este músico?')) {
       await fetch(`/api/musicos/${id}`, { method: 'DELETE' });
       fetchMusicos();
     }
   };
-
   // Filtro e busca
   const musicosFiltrados = musicos.filter(m => {
     const buscaLower = busca.toLowerCase();
@@ -65,47 +64,86 @@ function Musicos() {
     const tipoMatch = filtroTipo ? m.tipo === filtroTipo : true;
     return (nomeMatch || telMatch || congMatch) && tipoMatch;
   });
-
   return (
-    <div style={{ border: '1px solid #ccc', borderRadius: 8, padding: 16, marginBottom: 24, background: '#fafbfc' }}>
-      <h2 style={{ color: '#2c3e50' }}>Cadastro de Músicos/Organistas</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <input name="nome" placeholder="Nome" value={form.nome} onChange={handleChange} required style={{ flex: 1 }} />
-        <input name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} required style={{ flex: 1 }} />
-        <input name="congregacaoId" placeholder="ID Congregação" value={form.congregacaoId} onChange={handleChange} required style={{ flex: 1 }} />
-        <select name="tipo" value={form.tipo} onChange={handleChange} style={{ flex: 1 }}>
-          <option value="musico">Músico</option>
-          <option value="organista">Organista</option>
-        </select>
-        <button type="submit" style={{ flex: 1, minWidth: 100 }}>{editId ? 'Salvar' : 'Cadastrar'}</button>
-        {editId && <button type="button" onClick={() => { setForm({ nome: '', telefone: '', congregacaoId: '', tipo: 'musico' }); setEditId(null); }} style={{ flex: 1, minWidth: 100 }}>Cancelar</button>}
-      </form>
-      <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <input placeholder="Buscar por nome, telefone ou congregação" value={busca} onChange={e => setBusca(e.target.value)} style={{ flex: 2 }} />
-        <select value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)} style={{ flex: 1 }}>
-          <option value="">Todos</option>
-          <option value="musico">Músico</option>
-          <option value="organista">Organista</option>
-        </select>
-      </div>
-      <h3 style={{ color: '#34495e' }}>Lista de Músicos/Organistas</h3>
-      {loading ? <p>Carregando...</p> : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {musicosFiltrados.map(m => (
-            <li key={m.id} style={{ background: '#fff', marginBottom: 8, padding: 8, borderRadius: 4, boxShadow: '0 1px 2px #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span>
-                <b>{m.nome}</b> - {m.telefone} - {m.tipo} - Congregação: {m.congregacaoId}
-              </span>
-              <span>
-                <button onClick={() => handleEdit(m)} style={{ marginLeft: 8 }}>Editar</button>
-                <button onClick={() => handleDelete(m.id)} style={{ marginLeft: 4 }}>Excluir</button>
-              </span>
-            </li>
-          ))}
-          {musicosFiltrados.length === 0 && <li>Nenhum músico encontrado.</li>}
-        </ul>
+    <Box>
+      <Typography variant="h5" color="primary" gutterBottom>Cadastro de Músicos/Organistas</Typography>
+      <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={3}>
+              <TextField name="nome" label="Nome" value={form.nome} onChange={handleChange} required fullWidth size="small" />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField name="telefone" label="Telefone" value={form.telefone} onChange={handleChange} required fullWidth size="small" />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField name="congregacaoId" label="ID Congregação" value={form.congregacaoId} onChange={handleChange} required fullWidth size="small" />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <TextField select name="tipo" label="Tipo" value={form.tipo} onChange={handleChange} fullWidth size="small">
+                <MenuItem value="musico">Músico</MenuItem>
+                <MenuItem value="organista">Organista</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={1}>
+              <Button type="submit" variant="contained" color="primary" fullWidth>{editId ? 'Salvar' : 'Cadastrar'}</Button>
+            </Grid>
+            {editId && (
+              <Grid item xs={12} sm={1}>
+                <Button type="button" variant="outlined" color="secondary" fullWidth onClick={() => { setForm({ nome: '', telefone: '', congregacaoId: '', tipo: 'musico' }); setEditId(null); }}>Cancelar</Button>
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      </Paper>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
+        <TextField
+          placeholder="Buscar por nome, telefone ou congregação"
+          value={busca}
+          onChange={e => setBusca(e.target.value)}
+          size="small"
+          fullWidth
+          InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment> }}
+        />
+        <TextField
+          select
+          label="Tipo"
+          value={filtroTipo}
+          onChange={e => setFiltroTipo(e.target.value)}
+          size="small"
+          sx={{ minWidth: 120 }}
+        >
+          <MenuItem value="">Todos</MenuItem>
+          <MenuItem value="musico">Músico</MenuItem>
+          <MenuItem value="organista">Organista</MenuItem>
+        </TextField>
+      </Stack>
+      <Divider sx={{ mb: 2 }} />
+      <Typography variant="h6" color="text.secondary" gutterBottom>Lista de Músicos/Organistas</Typography>
+      {loading ? <CircularProgress /> : (
+        <Box>
+          {musicosFiltrados.length === 0 ? (
+            <Typography>Nenhum músico encontrado.</Typography>
+          ) : (
+            <Grid container spacing={1}>
+              {musicosFiltrados.map(m => (
+                <Grid item xs={12} key={m.id}>
+                  <Paper sx={{ p: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box>
+                      <Typography component="span" fontWeight={600}>{m.nome}</Typography> - {m.telefone} - {m.tipo} - Congregação: {m.congregacaoId}
+                    </Box>
+                    <Box>
+                      <IconButton color="primary" onClick={() => handleEdit(m)}><EditIcon /></IconButton>
+                      <IconButton color="error" onClick={() => handleDelete(m.id)}><DeleteIcon /></IconButton>
+                    </Box>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 
